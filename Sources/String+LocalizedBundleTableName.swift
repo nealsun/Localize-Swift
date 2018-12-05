@@ -24,15 +24,16 @@ public extension String {
      */
     func localized(using tableName: String?, in bundle: Bundle?) -> String {
         let bundle: Bundle = bundle ?? .main
+        var translated = self
+        if let path = bundle.path(forResource: LCLBaseBundle, ofType: "lproj"),
+            let bundle = Bundle(path: path) {
+            translated = bundle.localizedString(forKey: self, value: nil, table: tableName)
+        }
         if let path = bundle.path(forResource: Localize.currentLanguage(), ofType: "lproj"),
             let bundle = Bundle(path: path) {
-            return bundle.localizedString(forKey: self, value: nil, table: tableName)
+            translated = bundle.localizedString(forKey: self, value: translated, table: tableName)
         }
-        else if let path = bundle.path(forResource: LCLBaseBundle, ofType: "lproj"),
-            let bundle = Bundle(path: path) {
-            return bundle.localizedString(forKey: self, value: nil, table: tableName)
-        }
-        return self
+        return translated
     }
     
     /**
